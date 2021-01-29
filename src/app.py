@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_migrate import Migrate
 from flask_restful import Api
 from resources.items import Item, ItemsList, CreateItem
 from resources.user import UserRegister, UserList
@@ -8,8 +7,6 @@ from resources.student import Student
 from flask_jwt import JWT
 from security import authenticate, identity
 import os
-from flask_migrate import Migrate, MigrateCommand
-from flask_script import Manager
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 

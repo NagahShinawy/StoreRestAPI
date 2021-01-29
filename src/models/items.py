@@ -12,7 +12,9 @@ class ItemModel(db.Model):
     store_id = db.Column(
         db.Integer, db.ForeignKey("stores.id")
     )  # one inside many ( 1 to many relationship). "stores" is __tablename__
-    store = db.relationship("StoreModel")  # StoreModel is class name. (store 'One' in relationship)
+    store = db.relationship(
+        "StoreModel"
+    )  # StoreModel is class name. (store 'One' in relationship)
 
     def __init__(self, item_name, price, store_id):
         self.item_name = item_name
@@ -20,7 +22,12 @@ class ItemModel(db.Model):
         self.store_id = store_id
 
     def to_json(self):
-        return {"id": self.id, "item_name": self.item_name, "price": self.price, "store": self.store.name}
+        return {
+            "id": self.id,
+            "item_name": self.item_name,
+            "price": self.price,
+            "store": self.store.name,
+        }
 
     @classmethod
     def find_by_name(cls, item_name):

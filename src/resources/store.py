@@ -38,7 +38,6 @@ class CreateStore(Resource):
 
 
 class Store(Resource):
-
     def get(self, name):
         store = StoreModel.find_by_name(name)
         if store:
@@ -50,4 +49,3 @@ class Store(Resource):
         if store:
             store.delete_from_db()
         return {"msg": "deleted"}, 204
-
