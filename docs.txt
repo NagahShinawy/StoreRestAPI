@@ -1,0 +1,94 @@
+1- json uses double quotes
+2- jsonfiy
+3- calling API from JS
+============================
+section 4
+
+1- Api =  The main entry point for the application.
+
+2- 202 code means delay the creating . obj takes long time
+
+3- config  for authenticate:
+            app.config['JWT_SECRET_KEY'] = 'super-secret'   # CHANGE IT
+            jwt = JWTManager(app)  # OR ==> jwt = JWT(app, authenticate, identity)
+
+
+4- testing on postman like that (NOT Bearer):
+        key: Authorization
+        value: jwt {token}
+
+
+5- adding custom body request validation
+
+ parser = reqparse.RequestParser()
+ parser.add_argument(
+            "price", type=float, required=True, help="price field can not left black",
+        )   # adding custom validation on request body (go to string docs to read docs of class)
+        parser.add_argument("item_name", type=str, required=True, help="item name field can not left black", )
+        # todo : response like the following
+        # {
+        #     "message": {
+        #         "item_name": "item name field can not left black"
+        #     }
+        # }
+
+==============================================
+
+section 5
+1- delete first row
+    Delete from users where rowid IN (Select rowid from users limit 1);
+
+--------
+2-
+
+
+====================================================
+
+section 6
+
+resources is the logical part like views in django
+
+2- test on postman
+
+
+  var jsonData = JSON.parse(responseBody);
+console.log(jsonData);
+// console.log(responseBody)
+console.log(jsonData.access_token)
+tests["test jwt"] = jsonData.access_token !== undefined;  // like pytest
+postman.setEnvironmentVariable("jwt", jsonData.access_token);
+
+
+
+tests on postman
+
+
+    var jsonData = JSON.parse(responseBody);
+    console.log(jsonData);
+    // console.log(responseBody)
+    console.log(jsonData.access_token)
+    // like pytest
+    tests["access token was not empty jwt"] = jsonData.access_token !== undefined;
+
+    // response time
+    pm.test("Response time is less than 200ms", function () {
+        pm.expect(pm.response.responseTime).to.be.below(200);
+    });
+
+    // set token
+    pm.test("Status code is 200", function () {
+        pm.response.to.have.status(200);
+    });
+    postman.setEnvironmentVariable("jwt", jsonData.access_token);
+
+
+
+3- lazy = "dynamic"
+
+# lazy ="dynamic" to make items query builder not items objs from ItemModel
+===================================================
+
+
+
+
+
