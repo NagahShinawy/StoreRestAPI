@@ -88,6 +88,9 @@ tests on postman
 # lazy ="dynamic" to make items query builder not items objs from ItemModel
 ===================================================
 
+# path of sshkey
+/c/Users/<username>/.ssh/id_rsa
+
 
 
 
