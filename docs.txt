@@ -125,6 +125,16 @@ at Procfile :
 
 
 
+=============================
+
+for logs and troubleshooting install Heroku command cli
+track logs in the console
+
+1- heroku login
+2- heroku logs --app={{app_name}}
+
+
+
 
 
 
