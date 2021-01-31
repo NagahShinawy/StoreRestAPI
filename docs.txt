@@ -92,6 +92,20 @@ tests on postman
 /c/Users/<username>/.ssh/id_rsa
 
 
+=====================================
+
+deployment on Heroku
+
+1- Heroku runs dyno (like server) ==> put your code on , run your code, make it available to other people
+2- Dyno : Heroku version of server (virtual machine)
+3- Dyno runs flask app and uWSGI (is way of serving flask app)
+4- Dyno run python app, flask app, uWSGI (interact with flask app to make it online and available to use)
+5- Heroku app contains config properties like db config (postgresql, sqlite, mysql), and logging.
+6- Heroku app can run many Dyno apps (services) at the same time.
+7- db can be shared between Dynos
+8- Heroku enables SSL (Secure Sockets Layer)
+9- SSL : encrypted communication between the client and server(Heroku)
+
 
 
 
