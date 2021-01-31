@@ -106,6 +106,25 @@ deployment on Heroku
 8- Heroku enables SSL (Secure Sockets Layer)
 9- SSL : encrypted communication between the client and server(Heroku)
 
+==============
+
+CONFIG
+1- at uwsgi
+http-socket = :$(PORT)  =====> means get port number (var) from Heroku config
+
+module = src/app:app  =====> means run app from app.py
+
+Procfile: what Dyno we want to use in Heroku
+
+Dyno is the server: Dyno connects to http port and listening to that port to receive incoming request
+
+
+at Procfile :
+
+        web: uwsgi uwsgi.ini ==> means run uwsgi process with file (uwsgi.ini)
+
+
+
 
 
 
