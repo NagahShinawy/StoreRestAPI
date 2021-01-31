@@ -3,3 +3,5 @@ __pychace/
 src/__pycache__/
 .idea/
 src/data.db
+*.pyc
+.pytest_cache/
