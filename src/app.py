@@ -25,10 +25,6 @@ api = Api(
 
 
 # just like the line ==> 44 ==> with app.app_context()  ==> no need to call function manual.
-# it works automatic before first request
-@app.before_first_request
-def create_tables():
-    db.create_all()
 
 
 jwt = JWT(app, authenticate, identity)  # generate ==> BASE_URL/auth endpoint
@@ -40,8 +36,8 @@ if __name__ == "__main__":
     )  # import here because of circular import issue (import x & x import y and y import x ... so on)
 
     db.init_app(app)
-    with app.app_context():  # create db schema
-        db.create_all()
+    # with app.app_context():  # create db schema
+    #     db.create_all()
 
     api.add_resource(
         Student, "/student/<string:name>/", "/student/"
@@ -55,4 +51,4 @@ if __name__ == "__main__":
     api.add_resource(StoreList, "/stores/")
     api.add_resource(CreateStore, "/store/")
     api.add_resource(Store, "/store/<string:name>/")
-    app.run(port=5050, debug=True)
+    app.run(debug=True)

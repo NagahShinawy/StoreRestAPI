@@ -22,11 +22,21 @@ class ItemModel(db.Model):
         self.store_id = store_id
 
     def to_json(self):
+        print()
+        if self.store:
+
+            return {
+                    "id": self.id,
+                    "item_name": self.item_name,
+                    "price": self.price,
+                    "store": self.store.name,
+                }
+
         return {
             "id": self.id,
             "item_name": self.item_name,
             "price": self.price,
-            "store": self.store.name,
+            "store": "Not found",
         }
 
     @classmethod
