@@ -8,3 +8,7 @@ pip install -r requirments.txt
 python app.py
 
 ```
+
+##### python, flask, JWT, flask_restful, flask_sqlalchemy
+##### Deployed on Heroku
+
