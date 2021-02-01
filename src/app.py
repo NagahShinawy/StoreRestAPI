@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_restful import Api
-from resources.items import Item, ItemsList, CreateItem
-from resources.user import UserRegister, UserList
-from resources.store import StoreList, CreateStore, Store
-from resources.student import Student
+from src.resources.items import Item, ItemsList, CreateItem
+from src.resources.user import UserRegister, UserList
+from src.resources.store import StoreList, CreateStore, Store
+from src.resources.student import Student
 from flask_jwt import JWT
 from security import authenticate, identity
 import os
