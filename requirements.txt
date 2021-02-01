@@ -52,4 +52,5 @@ zipp==3.4.0
 
 # on production
 uwsgi
+pyscopg2
 

@@ -134,7 +134,8 @@ track logs in the console
 2- heroku logs --app={{app_name}}
 
 
+module = src.run:application
 
 
-
-
+############################
+install postgresql on production that is because sqlite file is destroyed every time Dyno sleep

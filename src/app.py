@@ -15,7 +15,10 @@ app.config[
     "SQLALCHEMY_TRACK_MODIFICATIONS"
 ] = False  # to avoid taking much resource (turn off SQlAlchemy modification tracker
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "data.db")
+dev_db = "sqlite:///" + os.path.join(basedir, "data.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+    "DATABASE_URL", dev_db
+)  # comes from production Heroku config vars
 
 
 app.secret_key = "SECRET-KEY"

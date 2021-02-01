@@ -1,3 +1,5 @@
+# RUN ON PRODUCTION
+
 from src.app import app as application, api, UserList  # for example, should be app
 from src.db import db
 from src.urls import *
