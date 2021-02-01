@@ -9,6 +9,6 @@ python app.py
 
 ```
 
-##### python, flask, JWT, flask_restful, flask_sqlalchemy
+##### python, flask, JWT, flask_restful, flask_sqlalchemy, postgesql for production 
 ##### Deployed on Heroku
 
