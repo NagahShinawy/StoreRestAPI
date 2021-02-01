@@ -5,7 +5,7 @@ from src.resources.user import UserRegister, UserList
 from src.resources.store import StoreList, CreateStore, Store
 from src.resources.student import Student
 from flask_jwt import JWT
-from security import authenticate, identity
+from src.security import authenticate, identity
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
