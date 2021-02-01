@@ -1,4 +1,4 @@
-from src.app import app as application  # for example, should be app
+from src.app import app as application, api, UserList  # for example, should be app
 from src.db import db
 
 db.init_app(application)
@@ -8,3 +8,5 @@ db.init_app(application)
 @application.before_first_request
 def create_tables():
     db.create_all()
+
+api.add_resource(UserList, "/users/")
