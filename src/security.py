@@ -1,4 +1,4 @@
-from models.user import UserModel
+from src.models.user import UserModel
 
 
 # users = [User(1, "bob", "123456")]
