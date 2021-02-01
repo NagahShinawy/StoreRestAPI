@@ -1,4 +1,4 @@
-from app import app as application  # for example, should be app
+from src.app import app as application  # for example, should be app
 from db import db
 
 db.init_app(application)
