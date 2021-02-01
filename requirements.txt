@@ -52,5 +52,4 @@ zipp==3.4.0
 
 # on production
 uwsgi
-pyscopg2==2
-psycopg2-binary==2
+psycopg2-binary
