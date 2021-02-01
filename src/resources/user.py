@@ -1,6 +1,6 @@
 import sqlite3
 from flask_restful import Resource, reqparse
-from models.user import UserModel
+from src.models.user import UserModel
 
 # resources is the logical part like views in django
 

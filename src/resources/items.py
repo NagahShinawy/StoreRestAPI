@@ -1,7 +1,7 @@
 from flask_jwt import jwt_required
 from flask_restful import Resource, reqparse
 from flask import request
-from models.items import ItemModel
+from src.models.items import ItemModel
 
 # resources is the logical part like views in django
 
