@@ -1,6 +1,6 @@
 from sqlalchemy.orm import validates
 
-from db import db
+from src.db import db
 
 
 class UserModel(db.Model):
