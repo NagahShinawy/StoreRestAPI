@@ -22,15 +22,14 @@ class ItemModel(db.Model):
         self.store_id = store_id
 
     def to_json(self):
-        print()
         if self.store:
 
             return {
-                    "id": self.id,
-                    "item_name": self.item_name,
-                    "price": self.price,
-                    "store": self.store.name,
-                }
+                "id": self.id,
+                "item_name": self.item_name,
+                "price": self.price,
+                "store": {"store_id": self.store.id, "store_name": self.store.name},
+            }
 
         return {
             "id": self.id,
@@ -38,6 +37,10 @@ class ItemModel(db.Model):
             "price": self.price,
             "store": "Not found",
         }
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
 
     @classmethod
     def find_by_name(cls, item_name):
