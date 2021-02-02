@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from src.resources.items import Item, ItemsList, CreateItem
-from src.resources.user import UserRegister, UserList
+from src.resources.user import UserRegister, UserList, User
 from src.resources.store import StoreList, CreateStore, Store
 from src.resources.student import Student
 from flask_jwt import JWT
@@ -15,6 +15,7 @@ app.config[
     "SQLALCHEMY_TRACK_MODIFICATIONS"
 ] = False  # to avoid taking much resource (turn off SQlAlchemy modification tracker
 
+app.config["PROPAGATE_EXCEPTIONS"] = True  # show error details
 dev_db = "sqlite:///" + os.path.join(basedir, "data.db")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL", dev_db
@@ -51,7 +52,8 @@ if __name__ == "__main__":
     api.add_resource(Item, "/item/<string:item_name>/")
     api.add_resource(UserRegister, "/register/")
     api.add_resource(UserList, "/users/")
+    api.add_resource(User, "/user/<username>/")
     api.add_resource(StoreList, "/stores/")
     api.add_resource(CreateStore, "/store/")
     api.add_resource(Store, "/store/<string:name>/")
-    app.run(debug=True)
+    app.run(debug=True, port=5050)

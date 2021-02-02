@@ -67,7 +67,7 @@ class Item(Resource):
 
 class ItemsList(Resource):
     def get(self):
-        return {"items": [item.to_json() for item in ItemModel.query.all()]}
+        return {"items": [item.to_json() for item in ItemModel.find_all()]}
 
     # return {"items": list(map(lambda item: item.to_json(), ItemModel.query.all()))} ==> it works
     # return {"items": ItemModel.query.all()} error ==>TypeError: Object of type 'ItemModel' is not JSON serializable

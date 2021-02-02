@@ -6,9 +6,11 @@ from flask import request
 
 class StoreList(Resource):
     def get(self):
-        return {
-            "stores": list(map(lambda store: store.to_json(), StoreModel.query.all()))
-        }
+        # return {
+        #     "stores": list(map(lambda store: store.to_json(), StoreModel.query.all()))
+        # }
+        print(StoreModel.find_all())
+        return {"stores": [store.to_json() for store in StoreModel.query.all()]}
 
 
 class CreateStore(Resource):

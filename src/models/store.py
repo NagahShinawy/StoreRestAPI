@@ -22,6 +22,10 @@ class StoreModel(db.Model):
         }
 
     @classmethod
+    def find_all(cls):
+        return cls.query.all()
+
+    @classmethod
     def find_by_name(cls, store_name):
         # cls.query = query builder
         store = cls.query.filter_by(name=store_name)
@@ -35,3 +39,6 @@ class StoreModel(db.Model):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
+
+    def __repr__(self):
+        return f"{self.id}-{self.name}"
