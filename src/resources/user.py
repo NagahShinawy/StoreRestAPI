@@ -60,7 +60,7 @@ class User(Resource):
             return {"details": "user deleted"}, 204
         return {"details": "Not found to delete"}, 404
 
-    @jwt_required
+    @jwt_required()
     def patch(self, username):
         original_user = UserModel.find_by_username(username)
         data = User.parser.parse_args()
