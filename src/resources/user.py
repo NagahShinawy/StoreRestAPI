@@ -15,6 +15,10 @@ class UserRegister(Resource):  # connect user
         "password", required=True, type=str, help="password is required"
     )
 
+    parser.add_argument(
+        "email", required=True, type=str, help="email is required"
+    )
+
     def post(self):
         # check unique
         data = (
@@ -23,6 +27,9 @@ class UserRegister(Resource):  # connect user
         data = body_values_to_lower(data)
         if UserModel.find_by_username(data["username"]):
             return {"msg": "username already exists"}, 400
+
+        if UserModel.find_by_email(data["email"]):
+            return {"msg": "email already exists"}, 400
 
         user = UserModel(
             **data

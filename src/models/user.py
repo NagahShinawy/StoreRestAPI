@@ -1,7 +1,7 @@
 from sqlalchemy.orm import validates
 from sqlalchemy import func
-
 from src.db import db
+from sqlalchemy_utils import EmailType
 
 
 class UserModel(db.Model):
@@ -9,10 +9,12 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80))
     password = db.Column(db.String(80))
+    email = db.Column(EmailType)
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, email):
         self.username = username
         self.password = password
+        self.email = email
 
     @classmethod
     def find_by_username(cls, username):
@@ -21,6 +23,12 @@ class UserModel(db.Model):
             username=func.lower(username)
         )  # case-insensitive-flask-sqlalchemy-query
         # user = cls.query.filter_by(username=UserModel.username.ilike(username))
+        if user:
+            return user.first()
+
+    @classmethod
+    def find_by_email(cls, email):
+        user = cls.query.filter_by(email=func.lower(email))
         if user:
             return user.first()
 
@@ -45,7 +53,7 @@ class UserModel(db.Model):
         return username
 
     def to_json(self):
-        return {"userid": self.id, "username": self.username}
+        return {"userid": self.id, "username": self.username, "email": self.email}
 
     def delete_from_db(self):
         db.session.delete(self)
