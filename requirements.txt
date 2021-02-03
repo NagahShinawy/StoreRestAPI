@@ -53,3 +53,4 @@ zipp==3.4.0
 # on production
 uwsgi
 psycopg2-binary
+Babel~=2.9.0

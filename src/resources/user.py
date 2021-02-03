@@ -19,6 +19,10 @@ class UserRegister(Resource):  # connect user
         "email", required=True, type=str, help="email is required"
     )
 
+    parser.add_argument(
+        "country", required=True, type=str, help="country is required"
+    )
+
     def post(self):
         # check unique
         data = (
@@ -33,7 +37,7 @@ class UserRegister(Resource):  # connect user
 
         user = UserModel(
             **data
-        )  # ===> username = data.get("username") , password = data.get("password")
+        )  # ===> username = data.get("username") , password = data.get("password", email=''', country='''')
         user.save_to_db()
         return {"message": "user created"}, 201
 
