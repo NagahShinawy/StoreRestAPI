@@ -140,7 +140,7 @@ class UserLogin(Resource):
                 access_token = create_access_token(
                     identity=username,
                     fresh=True,
-                    expires_delta=datetime.timedelta(seconds=15),
+                    expires_delta=datetime.timedelta(minutes=15),
                 )
                 refresh_token = create_refresh_token(identity=username)
                 return {
@@ -156,4 +156,3 @@ class TokenRefresh(Resource):
         current_user = get_jwt_identity()
         new_access_token = create_access_token(identity=current_user, fresh=False)
         return {"new_access_token": new_access_token}, 200
-

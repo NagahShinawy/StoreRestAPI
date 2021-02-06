@@ -6,7 +6,6 @@ from src.resources.store import StoreList, CreateStore, Store
 from src.resources.student import Student
 from flask_jwt_extended import JWTManager
 from src.common.constant import ADMIN_USERNAME
-
 # from src.utils.admin import is_admin
 # from flask_jwt import JWT
 # from src.security import authenticate, identity  # old way for auth and identity
@@ -61,7 +60,60 @@ def expired_token_callback():
     custom json response when token was expired
     :return:
     """
-    return jsonify({"description": "the token Was expired", "error": "token_expired"}), 401
+    return (
+        jsonify({"description": "the token Was expired", "error": "token_expired"}),
+        401,
+    )
+
+
+@jwt.invalid_token_loader
+def invalid_token_callback(error):
+    """
+    custom json response when token is invalid
+    :return:
+    """
+    return (
+        jsonify(
+            {"description": "Signature verification failed", "error": "invalid_token"}
+        ),
+        401,
+    )
+
+
+@jwt.unauthorized_loader
+def missing_token_callback(error):
+    """
+    custom json response when no jwt added to request
+    :return:
+    """
+    return (
+        jsonify({"description": "Request does't not contain access token", "error": "unauthorized_required"}),
+        401,
+    )
+
+
+@jwt.needs_fresh_token_loader
+def token_not_fresh_callback():
+    """
+    custom json response when jwt not fresh
+    :return:
+    """
+    return (
+        jsonify({"description": "The token is not fresh", "error": "fresh_token_required"}),
+        401,
+    )
+
+
+@jwt.revoked_token_loader
+def revoked_token_callback():
+    """
+    custom json response when jwt
+    :return:
+    """
+    return (
+        jsonify({"description": "The token has been revoked", "error": "token_revoked"}),
+        401,
+    )
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ from flask_jwt_extended import (
     jwt_optional,
     get_jwt_identity,
     fresh_jwt_required,
-    jwt_refresh_token_required
+    jwt_refresh_token_required,
 )
 
 
@@ -88,9 +88,12 @@ class ItemsList(Resource):
         )  # get jwt if it exist because it is @jwt_optional (return saving identity in this case username)
         items = ItemModel.find_all()
         # user = UserModel.find_by_username(username=identity)
-        if identity:   # identity is username
+        if identity:  # identity is username
             return {"items": [item.to_json() for item in items]}, 200
-        return {"items": [item.item_name for item in items], "msg": "more data available if you are login"}, 200
+        return {
+            "items": [item.item_name for item in items],
+            "msg": "more data available if you are login",
+        }, 200
 
     # return {"items": list(map(lambda item: item.to_json(), ItemModel.query.all()))} ==> it works
     # return {"items": ItemModel.query.all()} error ==>TypeError: Object of type 'ItemModel' is not JSON serializable
