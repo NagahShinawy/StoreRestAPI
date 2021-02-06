@@ -52,7 +52,7 @@ class UserRegister(Resource):  # connect user
             **data
         )  # ===> username = data.get("username") , password = data.get("password", email=''', country='''')
         user.save_to_db()
-        return {"message": "user created"}, 201
+        return {"message": "user created", "data": user.to_json()}, 201
 
 
 class UserList(Resource):

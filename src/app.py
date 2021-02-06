@@ -5,7 +5,9 @@ from src.resources.user import UserRegister, UserList, User, UserLogin, TokenRef
 from src.resources.store import StoreList, CreateStore, Store
 from src.resources.student import Student
 from flask_jwt_extended import JWTManager
+from src.blacklist import BLACKLIST
 from src.common.constant import ADMIN_USERNAME
+
 # from src.utils.admin import is_admin
 # from flask_jwt import JWT
 # from src.security import authenticate, identity  # old way for auth and identity
@@ -20,6 +22,7 @@ app.config[
 
 app.config["PROPAGATE_EXCEPTIONS"] = True  # show error details
 app.config["JWT_SECRET_KEY"] = "changeme"
+app.config["JWT_BLACKLIST_ENABLED"] = True
 # app.config["SECRET_KEY"] = "changeme"  default if you don't use JWT_SECRET_KEY
 
 dev_db = "sqlite:///" + os.path.join(basedir, "data.db")
@@ -52,6 +55,16 @@ def add_claims_to_jwt(identity):
     if os.environ.get("admin") == identity:  # change hard coding
         return {"is_admin": True, "full_access": True}
     return {"is_admin": False, "full_access": False}
+
+
+@jwt.token_in_blacklist_loader
+def is_token_in_black_list(decrypted_token):
+    """
+
+    :param decrypted_token: meta data of jwt token like we test using jwt.io
+    :return: True if (token or refresh ) in in black list , False otherwise
+    """
+    return decrypted_token['identity'] in BLACKLIST
 
 
 @jwt.expired_token_loader
@@ -87,7 +100,12 @@ def missing_token_callback(error):
     :return:
     """
     return (
-        jsonify({"description": "Request does't not contain access token", "error": "unauthorized_required"}),
+        jsonify(
+            {
+                "description": "Request does't not contain access token",
+                "error": "unauthorized_required",
+            }
+        ),
         401,
     )
 
@@ -99,7 +117,9 @@ def token_not_fresh_callback():
     :return:
     """
     return (
-        jsonify({"description": "The token is not fresh", "error": "fresh_token_required"}),
+        jsonify(
+            {"description": "The token is not fresh", "error": "fresh_token_required"}
+        ),
         401,
     )
 
@@ -107,11 +127,13 @@ def token_not_fresh_callback():
 @jwt.revoked_token_loader
 def revoked_token_callback():
     """
-    custom json response when jwt
+    custom json response when blocked user trying to access
     :return:
     """
     return (
-        jsonify({"description": "The token has been revoked", "error": "token_revoked"}),
+        jsonify(
+            {"description": "The token has been revoked", "error": "token_revoked"}
+        ),
         401,
     )
 

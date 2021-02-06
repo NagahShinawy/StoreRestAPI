@@ -158,3 +158,17 @@ REFRESH TOKEN  are credentials used to obtain access tokens.
 Refresh tokens are issued to the client by the authorization server and are used to obtain a new access token
 when the current access token becomes invalid or expires,
 or to obtain additional access tokens with identical or narrower scope.
+
+=======================
+custom loader call back
+1- @jwt.expired_token_loader
+2- @jwt.invalid_token_loader
+3- @jwt.unauthorized_loader
+4- @jwt.needs_fresh_token_loader
+5- @jwt.revoked_token_loader
+===============================
+blacklist for users
+1- enable config of flask black list
+    app.config['JWT_BLACKLIST_ENABLED'] = True
+    app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
+   means enable black list for both access refresh
