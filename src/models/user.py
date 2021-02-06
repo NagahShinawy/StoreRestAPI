@@ -20,6 +20,9 @@ class UserModel(db.Model):
         self.email = email
         self.country = country
 
+    def __str__(self):
+        return self.username
+
     @classmethod
     def find_by_username(cls, username):
         # cls.query = query builder
@@ -41,7 +44,7 @@ class UserModel(db.Model):
         # cls.query = query builder
         user = cls.query.filter_by(id=user_id)
         if user:
-            return user
+            return user.first()
 
     def save_to_db(self):
         db.session.add(self)
@@ -57,7 +60,11 @@ class UserModel(db.Model):
         return username
 
     def to_json(self):
-        response_data = {"userid": self.id, "username": self.username, "email": self.email}
+        response_data = {
+            "userid": self.id,
+            "username": self.username,
+            "email": self.email,
+        }
         country = users.validate_country(self.country)
         if country is not None:
             response_data.update({"country": {"code": country[0], "name": country[1]}})

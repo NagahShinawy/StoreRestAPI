@@ -139,3 +139,22 @@ module = src.run:application
 
 ############################
 install postgresql on production that is because sqlite file is destroyed every time Dyno sleep
+
+
+========================
+
+headers = {'Authorization': 'Bearer {}'.format(access_token) }   # for ==.  from flask_jwt_extended import jwt_required
+headers = {'Authorization': 'JWT {}'.format(jwt) }   # for ==>  from flask_jwt import jwt_required
+
+============================
+
+claims : adding more info to jwt . it is NOT identity .
+
+============================
+ACCESS TOKEN are issued to third-party clients by an authorization server with the approval of the resource owner. The client uses the access token to access the protected resources hosted by the resource server.
+-----
+
+REFRESH TOKEN  are credentials used to obtain access tokens.
+Refresh tokens are issued to the client by the authorization server and are used to obtain a new access token
+when the current access token becomes invalid or expires,
+or to obtain additional access tokens with identical or narrower scope.

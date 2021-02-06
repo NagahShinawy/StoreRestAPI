@@ -1,7 +1,18 @@
 from flask_jwt import jwt_required
 from flask_restful import Resource, reqparse
 from flask import request
+
+from src.models.user import UserModel
 from src.models.items import ItemModel
+from flask_jwt_extended import (
+    jwt_required as jwt_required_extended,
+    get_jwt_claims,
+    jwt_optional,
+    get_jwt_identity,
+    fresh_jwt_required,
+    jwt_refresh_token_required
+)
+
 
 # resources is the logical part like views in django
 
@@ -56,8 +67,12 @@ class Item(Resource):
     def patch(self, item_name=None):
         return request.get_json()
 
-    @jwt_required()
+    # @jwt_required()  # for jwt
+    @jwt_required_extended  # for jwtManager
     def delete(self, item_name):
+        claims = get_jwt_claims()
+        if not claims["is_admin"]:
+            return {"msg": "need Admin permission to delete an item"}, 401
         item = ItemModel.find_by_name(item_name)
         if item:
             item.delete_from_db()
@@ -66,8 +81,16 @@ class Item(Resource):
 
 
 class ItemsList(Resource):
+    @jwt_optional
     def get(self):
-        return {"items": [item.to_json() for item in ItemModel.find_all()]}
+        identity = (
+            get_jwt_identity()
+        )  # get jwt if it exist because it is @jwt_optional (return saving identity in this case username)
+        items = ItemModel.find_all()
+        # user = UserModel.find_by_username(username=identity)
+        if identity:   # identity is username
+            return {"items": [item.to_json() for item in items]}, 200
+        return {"items": [item.item_name for item in items], "msg": "more data available if you are login"}, 200
 
     # return {"items": list(map(lambda item: item.to_json(), ItemModel.query.all()))} ==> it works
     # return {"items": ItemModel.query.all()} error ==>TypeError: Object of type 'ItemModel' is not JSON serializable
@@ -95,7 +118,7 @@ class CreateItem(Resource):
         help="every item needs a store id",
     )
 
-    @jwt_required()
+    @fresh_jwt_required  # means required "access token" but fresh=True
     def post(self):
         # data = request.get_json(force=True, silent=True)
         data = CreateItem.parser.parse_args()  # add custom validation on body data

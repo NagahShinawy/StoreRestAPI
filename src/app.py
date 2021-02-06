@@ -1,11 +1,15 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api
 from src.resources.items import Item, ItemsList, CreateItem
-from src.resources.user import UserRegister, UserList, User
+from src.resources.user import UserRegister, UserList, User, UserLogin, TokenRefresh
 from src.resources.store import StoreList, CreateStore, Store
 from src.resources.student import Student
-from flask_jwt import JWT
-from src.security import authenticate, identity
+from flask_jwt_extended import JWTManager
+from src.common.constant import ADMIN_USERNAME
+
+# from src.utils.admin import is_admin
+# from flask_jwt import JWT
+# from src.security import authenticate, identity  # old way for auth and identity
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -16,6 +20,9 @@ app.config[
 ] = False  # to avoid taking much resource (turn off SQlAlchemy modification tracker
 
 app.config["PROPAGATE_EXCEPTIONS"] = True  # show error details
+app.config["JWT_SECRET_KEY"] = "changeme"
+# app.config["SECRET_KEY"] = "changeme"  default if you don't use JWT_SECRET_KEY
+
 dev_db = "sqlite:///" + os.path.join(basedir, "data.db")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL", dev_db
@@ -23,6 +30,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
 
 
 app.secret_key = "SECRET-KEY"
+
 api = Api(
     app, prefix="/api/v1"
 )  # The main entry point for the application. (routes) (endpoints)
@@ -31,7 +39,29 @@ api = Api(
 # just like the line ==> 44 ==> with app.app_context()  ==> no need to call function manual.
 
 
-jwt = JWT(app, authenticate, identity)  # generate ==> BASE_URL/auth endpoint
+# jwt = JWT(app, authenticate, identity)  # generate ==> BASE_URL/auth endpoint  (old way)
+jwt = JWTManager(
+    app
+)  # generate ==> you have to create your endpoint by your self ==> /login (new way). it authenticates the user
+
+
+@jwt.user_claims_loader
+def add_claims_to_jwt(identity):
+    """adding more info (claims) to jwt
+    check with jwt.io to see jwt more info that you add it like "is_admin"
+    """
+    if os.environ.get("admin") == identity:  # change hard coding
+        return {"is_admin": True, "full_access": True}
+    return {"is_admin": False, "full_access": False}
+
+
+@jwt.expired_token_loader
+def expired_token_callback():
+    """
+    custom json response when token was expired
+    :return:
+    """
+    return jsonify({"description": "the token Was expired", "error": "token_expired"}), 401
 
 
 if __name__ == "__main__":
@@ -52,7 +82,11 @@ if __name__ == "__main__":
     api.add_resource(Item, "/item/<string:item_name>/")
     api.add_resource(UserRegister, "/register/")
     api.add_resource(UserList, "/users/")
-    api.add_resource(User, "/user/<username>/")
+    api.add_resource(
+        User, "/user/<string:username_or_id>/", "/user/<int:username_or_id>/"
+    )
+    api.add_resource(UserLogin, "/login/")
+    api.add_resource(TokenRefresh, "/refresh/")
     api.add_resource(StoreList, "/stores/")
     api.add_resource(CreateStore, "/store/")
     api.add_resource(Store, "/store/<string:name>/")

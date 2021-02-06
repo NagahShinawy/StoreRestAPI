@@ -9,7 +9,6 @@ class StoreList(Resource):
         # return {
         #     "stores": list(map(lambda store: store.to_json(), StoreModel.query.all()))
         # }
-        print(StoreModel.find_all())
         return {"stores": [store.to_json() for store in StoreModel.query.all()]}
 
 
