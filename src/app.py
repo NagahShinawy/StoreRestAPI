@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_restful import Api
 from src.resources.items import Item, ItemsList, CreateItem
-from src.resources.user import UserRegister, UserList, User, UserLogin, TokenRefresh
+from src.resources.user import UserRegister, UserList, User, UserLogin, TokenRefresh, UserLogout
 from src.resources.store import StoreList, CreateStore, Store
 from src.resources.student import Student
 from flask_jwt_extended import JWTManager
@@ -23,6 +23,7 @@ app.config[
 app.config["PROPAGATE_EXCEPTIONS"] = True  # show error details
 app.config["JWT_SECRET_KEY"] = "changeme"
 app.config["JWT_BLACKLIST_ENABLED"] = True
+app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']  # allow blacklisting for access and refresh tokens
 # app.config["SECRET_KEY"] = "changeme"  default if you don't use JWT_SECRET_KEY
 
 dev_db = "sqlite:///" + os.path.join(basedir, "data.db")
@@ -58,13 +59,14 @@ def add_claims_to_jwt(identity):
 
 
 @jwt.token_in_blacklist_loader
-def is_token_in_black_list(decrypted_token):
+def check_if_token_in_blacklist(decrypted_token):
     """
 
     :param decrypted_token: meta data of jwt token like we test using jwt.io
     :return: True if (token or refresh ) in in black list , False otherwise
     """
-    return decrypted_token['identity'] in BLACKLIST
+    # return decrypted_token['identity'] usernames added in BLACKLIST as identities
+    return decrypted_token['jti'] in BLACKLIST  # jti that is because we add jti to BLACKLIST at UserLogin
 
 
 @jwt.expired_token_loader
@@ -87,7 +89,7 @@ def invalid_token_callback(error):
     """
     return (
         jsonify(
-            {"description": "Signature verification failed", "error": "invalid_token"}
+            {"description": "Signature verification failed.", "error": "invalid_token"}
         ),
         401,
     )
@@ -160,6 +162,7 @@ if __name__ == "__main__":
         User, "/user/<string:username_or_id>/", "/user/<int:username_or_id>/"
     )
     api.add_resource(UserLogin, "/login/")
+    api.add_resource(UserLogout, "/logout/")
     api.add_resource(TokenRefresh, "/refresh/")
     api.add_resource(StoreList, "/stores/")
     api.add_resource(CreateStore, "/store/")

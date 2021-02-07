@@ -3,7 +3,7 @@ from flask_jwt_extended import (
     jwt_required as jwt_required_extended,
     get_jwt_claims,
     jwt_refresh_token_required,
-    get_jwt_identity,
+    get_jwt_identity, get_raw_jwt,
 )
 from flask_restful import Resource, reqparse
 from src.models.user import UserModel
@@ -12,6 +12,7 @@ from flask import request, jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
+from src.blacklist import BLACKLIST
 
 # resources is the logical part like views in django
 _user_parser = reqparse.RequestParser()
@@ -148,6 +149,15 @@ class UserLogin(Resource):
                     "refresh_token": refresh_token,
                 }, 200
         return {"msg": "invalid credentials"}, 401  # mean permissions denied
+
+
+class UserLogout(Resource):
+
+    @jwt_required_extended
+    def post(self):
+        jti = get_raw_jwt()['jti']  # jti is "JWT ID", a unique identifier for a JWT.
+        BLACKLIST.add(jti)
+        return {"message": "Successfully logged out"}, 200
 
 
 class TokenRefresh(Resource):
