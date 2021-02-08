@@ -13,6 +13,8 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 from src.blacklist import BLACKLIST
+from utils.http import status
+
 
 # resources is the logical part like views in django
 _user_parser = reqparse.RequestParser()
@@ -44,16 +46,16 @@ class UserRegister(Resource):  # connect user
         )  # custom validation and parsing to request body
         data = body_values_to_lower(data)
         if UserModel.find_by_username(data["username"]):
-            return {"msg": "username already exists"}, 400
+            return {"msg": "username already exists"}, status.HTTP_400_BAD_REQUEST
 
         if UserModel.find_by_email(data["email"]):
-            return {"msg": "email already exists"}, 400
+            return {"msg": "email already exists"}, status.HTTP_400_BAD_REQUEST
         data["password"] = generate_password_hash(data.get("password"))
         user = UserModel(
             **data
         )  # ===> username = data.get("username") , password = data.get("password", email=''', country='''')
         user.save_to_db()
-        return {"message": "user created", "data": user.to_json()}, 201
+        return {"message": "user created", "data": user.to_json()}, status.HTTP_201_CREATED
 
 
 class UserList(Resource):
@@ -80,14 +82,14 @@ class User(Resource):
         if user_by_id:
             return {"data": user_by_id.to_json()}
 
-        return {"details": f"user '{username_or_id}' not found"}, 404
+        return {"details": f"user '{username_or_id}' not found"}, status.HTTP_404_NOT_FOUND
 
     # @jwt_required()  # for jwt
     @jwt_required_extended  # for jwtManager
     def delete(self, username_or_id):
         claims = get_jwt_claims()
         if not claims["is_admin"]:
-            return {"msg": "Admin privilege required"}, 401
+            return {"msg": "Admin privilege required"}, status.HTTP_401_UNAUTHORIZED
         user_by_name = UserModel.find_by_username(username_or_id)
         user_by_id = UserModel.find_by_id(username_or_id)
 
@@ -98,9 +100,9 @@ class User(Resource):
             user_by_id.delete_from_db()
 
         if any([user_by_name, user_by_id]):
-            return {"details": "user deleted"}, 204
+            return {"details": "user deleted"}, status.HTTP_204_NO_CONTENT
 
-        return {"details": "Not found to delete"}, 404
+        return {"details": "Not found to delete"}, status.HTTP_404_NOT_FOUND
 
     @jwt_required()
     def patch(self, username):
@@ -112,13 +114,13 @@ class User(Resource):
             if user:
                 return {
                     "msg": f"can not update with username '{data.get('username').lower()}'. it is exist"
-                }, 400
+                }, status.HTTP_400_BAD_REQUEST
             original_user.username = data.get("username")
             original_user.save_to_db()
             return {
                 "details": f"user updated from '{username}' to '{data.get('username')}'"
-            }, 202
-        return {"details": f"not found '{data.get('username')}'"}, 404
+            }, status.HTTP_202_ACCEPTED
+        return {"details": f"not found '{data.get('username')}'"}, status.HTTP_404_NOT_FOUND
 
 
 class UserLogin(Resource):
@@ -147,8 +149,8 @@ class UserLogin(Resource):
                 return {
                     "access_token": access_token,
                     "refresh_token": refresh_token,
-                }, 200
-        return {"msg": "invalid credentials"}, 401  # mean permissions denied
+                }, status.HTTP_200_OK
+        return {"msg": "invalid credentials"}, status.HTTP_401_UNAUTHORIZED  # mean permissions denied
 
 
 class UserLogout(Resource):
@@ -157,7 +159,7 @@ class UserLogout(Resource):
     def post(self):
         jti = get_raw_jwt()['jti']  # jti is "JWT ID", a unique identifier for a JWT.
         BLACKLIST.add(jti)
-        return {"message": "Successfully logged out"}, 200
+        return {"message": "Successfully logged out"}, status.HTTP_200_OK
 
 
 class TokenRefresh(Resource):
@@ -165,4 +167,4 @@ class TokenRefresh(Resource):
     def post(self):
         current_user = get_jwt_identity()
         new_access_token = create_access_token(identity=current_user, fresh=False)
-        return {"new_access_token": new_access_token}, 200
+        return {"new_access_token": new_access_token}, status.HTTP_200_OK
